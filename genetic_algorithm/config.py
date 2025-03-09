@@ -32,3 +32,16 @@ MUTATION_METHOD = "one_point"
 
 # Funkcja testowa do optymalizacji (np. "rastrigin", "ackley")
 TEST_FUNCTION = "rastrigin"  
+
+# Dolna i górna granica przedziału zmiennych
+LOWER_BOUND = -5.0
+UPPER_BOUND = 5.0
+
+# Rodzaj selekcji ("best", "roulette", "tournament")
+SELECTION_METHOD = "roulette"
+
+# Prawdopodobieństwo krzyżowania
+CROSSOVER_PROB = 0.8  
+
+# Rodzaj krzyżowania ("one_point", "two_point", "uniform", "granular")
+CROSSOVER_METHOD = "one_point"  
