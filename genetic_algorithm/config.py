@@ -45,3 +45,18 @@ CROSSOVER_PROB = 0.8
 
 # Rodzaj krzyżowania ("one_point", "two_point", "uniform", "granular")
 CROSSOVER_METHOD = "one_point"  
+
+# Prawdopodobieństwo mutacji
+MUTATION_PROB = 0.05  
+
+# Rodzaj mutacji ("boundary", "one_point", "two_point")
+MUTATION_METHOD = "one_point" 
+
+# Prawdopodobieństwo inwersji
+INVERSION_PROB = 0.02  
+
+# Liczba osobników zachowanych w strategii elitarnej
+ELITISM_COUNT = 5  
+
+# Funkcja testowa do optymalizacji ("rastrigin", "sphere", "ackley", "schwefel", "rosenbrock")
+TEST_FUNCTION = "rastrigin"
