@@ -10,7 +10,7 @@ class GeneticAlgorithmGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Algorytm Genetyczny - Konfiguracja")
-        self.root.geometry("500x600")
+        self.root.geometry("500x700")
 
         # Parametry algorytmu
         self.params = {
@@ -19,6 +19,7 @@ class GeneticAlgorithmGUI:
             "Mutacja [%]": tk.DoubleVar(value=MUTATION_PROB * 100),
             "Krzyżowanie [%]": tk.DoubleVar(value=CROSSOVER_PROB * 100),
             "Inwersja [%]": tk.DoubleVar(value=INVERSION_PROB * 100),
+            "Elitizm": tk.IntVar(value=ELITISM_COUNT)
         }
 
         # Tworzenie interfejsu
@@ -41,6 +42,24 @@ class GeneticAlgorithmGUI:
         self.test_function.set(TEST_FUNCTION)
         self.test_function.pack(pady=5)
 
+        # Wybór metody selekcji
+        ttk.Label(self.root, text="Metoda selekcji:").pack(pady=5)
+        self.selection_method = ttk.Combobox(self.root, values=["best", "roulette", "tournament"])
+        self.selection_method.set(SELECTION_METHOD)
+        self.selection_method.pack(pady=5)
+
+        # Wybór metody krzyżowania
+        ttk.Label(self.root, text="Metoda krzyżowania:").pack(pady=5)
+        self.crossover_method = ttk.Combobox(self.root, values=["one_point", "two_point", "uniform", "granular"])
+        self.crossover_method.set(CROSSOVER_METHOD)
+        self.crossover_method.pack(pady=5)
+
+        # Wybór metody mutacji
+        ttk.Label(self.root, text="Metoda mutacji:").pack(pady=5)
+        self.mutation_method = ttk.Combobox(self.root, values=["boundary", "one_point", "two_point"])
+        self.mutation_method.set(MUTATION_METHOD)
+        self.mutation_method.pack(pady=5)
+
         # Przycisk startu
         self.start_button = ttk.Button(self.root, text="Uruchom Algorytm", command=self.start_algorithm)
         self.start_button.pack(pady=20)
@@ -54,29 +73,31 @@ class GeneticAlgorithmGUI:
         self.canvas.get_tk_widget().pack(pady=20)
 
     def start_algorithm(self):
-        # Pobranie wartości parametrów
+        """Rozpoczęcie algorytmu w osobnym wątku"""
         config_updates = {
             "POPULATION_SIZE": self.params["Populacja"].get(),
             "NUM_GENERATIONS": self.params["Epoki"].get(),
             "MUTATION_PROB": self.params["Mutacja [%]"].get() / 100,
             "CROSSOVER_PROB": self.params["Krzyżowanie [%]"].get() / 100,
             "INVERSION_PROB": self.params["Inwersja [%]"].get() / 100,
-            "TEST_FUNCTION": self.test_function.get()
+            "ELITISM_COUNT": self.params["Elitizm"].get(),
+            "TEST_FUNCTION": self.test_function.get(),
+            "SELECTION_METHOD": self.selection_method.get(),
+            "CROSSOVER_METHOD": self.crossover_method.get(),
+            "MUTATION_METHOD": self.mutation_method.get()
         }
 
-        # Uruchomienie algorytmu w osobnym wątku
         thread = threading.Thread(target=self.run_algorithm, args=(config_updates,))
         thread.start()
 
     def run_algorithm(self, config_updates):
-        # Aktualizacja konfiguracji
+        """Aktualizacja konfiguracji i uruchomienie algorytmu"""
         for key, value in config_updates.items():
             globals()[key] = value
 
-        # Uruchomienie algorytmu
         results = run_genetic_algorithm()
 
-        # Rysowanie wykresu
+        # Rysowanie wykresu wyników
         self.ax.clear()
         self.ax.plot(range(len(results)), results, marker='o')
         self.ax.set_title("Wartość funkcji celu")
