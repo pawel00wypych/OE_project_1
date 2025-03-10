@@ -23,6 +23,7 @@ class Selection:
             for individual in population.individuals:
                 current += individual.fitness
                 if current > pick:
+                    selected_individuals.append(individual)
                     break
         return selected_individuals
 
