@@ -3,7 +3,6 @@ import pandas as pd
 
 class Chromosome:
 
-
     def __init__(self,
                  number_of_variables,
                  precision,
@@ -28,22 +27,29 @@ class Chromosome:
         """calculates ranges for all variables"""
         self.ranges = []  # Clear any previous ranges to avoid duplication
         for min_val, max_val in self.variables_list:
-            self.ranges.append(abs(max_val - min_val))
+            if min_val < max_val:
+                self.ranges.append(max_val - min_val)
+            else:
+                self.ranges.append(min_val - max_val)
+
 
     def calculate_number_of_bits(self):
         """We are calculating number of bits for chromosome and variables"""
         if not self.ranges:
             self.calculate_ranges()
 
-        ranges_series = pd.Series(self.ranges)
-        scaled_ranges = ranges_series * pow(10, self.precision)
-        self.number_of_bits_variables = scaled_ranges.apply(lambda x: len(bin(int(x))[2:])).tolist()
+        scaled_ranges =  [x * pow(10, self.precision) for x in self.ranges]
+        self.number_of_bits_variables = [ len(bin(int(x))[2:]) for x in scaled_ranges]
         self.number_of_bits_chromosome = sum(self.number_of_bits_variables)
 
     def generate_chromosome(self):
         self.chromosome = [random.randint(0,1) for _ in range(self.number_of_bits_chromosome)]
 
+    def convert_bin_to_decimal(self, list_of_bits):
+        return sum(val*(2**idx) for idx, val in enumerate(reversed(list_of_bits)))
+
     def decode_variables(self):
+        self.decoded_variables = []
         variables_list_series = pd.Series(self.variables_list)
         start_idx = 0
 
@@ -51,14 +57,27 @@ class Chromosome:
             min_val, max_val = variables_list_series[i]
             num_bits = self.number_of_bits_variables[i]
 
+            if num_bits == 0:
+                self.decoded_variables.append(min_val)
+                continue
+
             # get proper chromosome segment (representing variable)
             end_idx = start_idx + num_bits
             segment = self.chromosome[start_idx:end_idx]
 
             # calculating segment as decimal value
-            decimal_value = int("".join(str(bit) for bit in segment), 2)
+            decimal_value = self.convert_bin_to_decimal(segment)
 
             # transforming into real value (scaled value)
-            scaled_value = min_val + (decimal_value * (max_val - min_val)) / (pow(2, num_bits) - 1)
+            if min_val < max_val:
+                scaled_value = min_val + (decimal_value * (max_val - min_val)) / (pow(2, num_bits) - 1)
+            else:
+                scaled_value = min_val - (decimal_value * (min_val - max_val)) / (pow(2, num_bits) - 1)
+
+            if scaled_value < min_val:
+                scaled_value = min_val
+            elif scaled_value > max_val:
+                scaled_value = max_val
+
             self.decoded_variables.append(scaled_value)
             start_idx = end_idx
