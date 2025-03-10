@@ -18,6 +18,7 @@ class Chromosome:
         self.number_of_bits_chromosome = 0
         self.chromosome = []
         self.decoded_variables = []
+        self.fitness = 0
 
         self.calculate_ranges()
         self.calculate_number_of_bits()
