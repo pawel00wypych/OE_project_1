@@ -6,19 +6,24 @@ class Chromosome:
     def __init__(self,
                  number_of_variables,
                  precision,
-                 variables_list):
+                 variables_list,
+                 chromosome=None,
+                 fitness=0):
         """variables_list - values ranges for all variables
            ex. for x,y,z -> variables = [(0,5),(-1,7),(2, 8)]
            x = (0,5), y = (-1,7), z = (2, 8)"""
+        if chromosome is None:
+            chromosome = []
+
         self.number_of_variables = number_of_variables
         self.variables_list = variables_list
         self.precision = precision
         self.ranges = []
         self.number_of_bits_variables = []
         self.number_of_bits_chromosome = 0
-        self.chromosome = []
+        self.chromosome = chromosome
         self.decoded_variables = []
-        self.fitness = 0
+        self.fitness = fitness
 
         self.calculate_ranges()
         self.calculate_number_of_bits()
