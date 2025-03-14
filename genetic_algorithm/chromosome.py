@@ -6,19 +6,24 @@ class Chromosome:
     def __init__(self,
                  number_of_variables,
                  precision,
-                 variables_list):
-        """variables_list - values ranges for all variables
+                 variables_ranges_list,
+                 chromosome=None,
+                 fitness=0):
+        """variables_ranges_list - values ranges for all variables
            ex. for x,y,z -> variables = [(0,5),(-1,7),(2, 8)]
            x = (0,5), y = (-1,7), z = (2, 8)"""
+        if chromosome is None:
+            chromosome = []
+
         self.number_of_variables = number_of_variables
-        self.variables_list = variables_list
+        self.variables_ranges_list = variables_ranges_list
         self.precision = precision
         self.ranges = []
         self.number_of_bits_variables = []
         self.number_of_bits_chromosome = 0
-        self.chromosome = []
+        self.chromosome = chromosome
         self.decoded_variables = []
-        self.fitness = 0
+        self.fitness = fitness
 
         self.calculate_ranges()
         self.calculate_number_of_bits()
@@ -27,7 +32,7 @@ class Chromosome:
     def calculate_ranges(self):
         """calculates ranges for all variables"""
         self.ranges = []  # Clear any previous ranges to avoid duplication
-        for min_val, max_val in self.variables_list:
+        for min_val, max_val in self.variables_ranges_list:
             if min_val < max_val:
                 self.ranges.append(max_val - min_val)
             else:
@@ -51,7 +56,7 @@ class Chromosome:
 
     def decode_variables(self):
         self.decoded_variables = []
-        variables_list_series = pd.Series(self.variables_list)
+        variables_list_series = pd.Series(self.variables_ranges_list)
         start_idx = 0
 
         for i in range(self.number_of_variables):
