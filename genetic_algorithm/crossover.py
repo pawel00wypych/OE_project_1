@@ -1,5 +1,5 @@
 import random
-import chromosome
+import genetic_algorithm.chromosome as chromosome
 
 class  Crossover:
     def __init__(self, population,crossover_probability):
@@ -121,12 +121,12 @@ class  Crossover:
                           crossover_point):
         new_chromo1 = chromosome.Chromosome(chromo1.number_of_variables,
                                             chromo1.precision,
-                                            chromo1.variables_list,
+                                            chromo1.variables_ranges_list,
                                             chromo1.chromosome[:crossover_point]
                                             + chromo2.chromosome[crossover_point:])
         new_chromo2 = chromosome.Chromosome(chromo2.number_of_variables,
                                             chromo2.precision,
-                                            chromo2.variables_list,
+                                            chromo2.variables_ranges_list,
                                             chromo2.chromosome[:crossover_point]
                                             + chromo1.chromosome[crossover_point:])
         return new_chromo1, new_chromo2
@@ -137,11 +137,11 @@ class  Crossover:
                                new_genes1,
                                new_genes2):
         new_chromosome1 = chromosome.Chromosome(chromo1.number_of_variables,
-                                            chromo1.precision,
-                                            chromo1.variables_list,
-                                            new_genes1)
+                                                chromo1.precision,
+                                                chromo1.variables_ranges_list,
+                                                new_genes1)
         new_chromosome2 = chromosome.Chromosome(chromo2.number_of_variables,
-                                            chromo2.precision,
-                                            chromo2.variables_list,
-                                            new_genes2)
+                                                chromo2.precision,
+                                                chromo2.variables_ranges_list,
+                                                new_genes2)
         return new_chromosome1, new_chromosome2
