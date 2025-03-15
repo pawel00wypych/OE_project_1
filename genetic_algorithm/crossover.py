@@ -11,7 +11,7 @@ class  Crossover:
         for i in range(len(self.population) // 2):
             chromo1, chromo2 = random.sample(self.population, 2)
             if self.decide_to_crossover():
-                crossover_point = random.randint(1,chromo1.number_of_bits_chromosome)
+                crossover_point = random.randint(1,chromo1.number_of_bits_chromosome-1)
                 new_chromo1, new_chromo2 = self.cross_chromosomes(chromo1,
                                                                   chromo2,
                                                                   crossover_point)
@@ -28,7 +28,7 @@ class  Crossover:
         for i in range(len(self.population) // 2):
             chromo1, chromo2 = random.sample(self.population,2)
             if self.decide_to_crossover():
-                point1, point2 = sorted(random.sample(range(1, chromo1.number_of_bits_chromosome), 2))
+                point1, point2 = sorted(random.sample(range(1, chromo1.number_of_bits_chromosome-1), 2))
                 new_chromo1, new_chromo2   = self.cross_chromosomes(chromo1,
                                                                     chromo2,
                                                                     point1)
