@@ -1,5 +1,5 @@
-from chromosome import Chromosome
-from config import POPULATION_SIZE
+from genetic_algorithm.chromosome import Chromosome
+from genetic_algorithm.config import POPULATION_SIZE
 
 class Population:
     def __init__(self, number_of_variables, precision, variables_list):
@@ -26,10 +26,6 @@ class Population:
         for individual in self.individuals:
             individual.decode_variables()  # Dekodujemy chromosom do wartości rzeczywistych
             individual.fitness = fitness_function(individual.decoded_variables)
-
-    def get_best(self):
-        """Zwraca najlepszego osobnika z populacji."""
-        return max(self.individuals, key=lambda x: x.fitness)
 
     def get_population_size(self):
         """Zwraca liczbę osobników w populacji."""
