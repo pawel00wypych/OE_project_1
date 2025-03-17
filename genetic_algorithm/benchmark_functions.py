@@ -1,8 +1,8 @@
-from opfunu.cec_based import F12020  # Sphere Function
+from benchmark_functions import Hypersphere # Sphere Function
 from opfunu.cec_based.cec2014 import F12014  # Hybrid Function 1
 
 # 📌 Sphere function
-sphere_function = F12020()
+sphere_function = Hypersphere()
 
 def sphere_fitness(variables):
     return sphere_function.evaluate(variables)
