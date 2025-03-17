@@ -1,5 +1,5 @@
-from chromosome import Chromosome
-from config import POPULATION_SIZE
+from genetic_algorithm.chromosome import Chromosome
+from genetic_algorithm.config import POPULATION_SIZE
 
 class Population:
     def __init__(self, number_of_variables, precision, variables_list):
