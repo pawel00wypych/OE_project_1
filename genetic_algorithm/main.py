@@ -6,16 +6,18 @@ from genetic_algorithm.mutation import Mutation
 from genetic_algorithm.inversion import Inversion
 from genetic_algorithm.elitism import Elitism
 from genetic_algorithm.config import POPULATION_SIZE, EPOCHS
+from genetic_algorithm.benchmark_functions import sphere_fitness, hybrid_fitness
 
 # Funkcja celu (przykładowa, można podmienić na funkcję testową z CEC)
-def fitness_function(variables):
-    return -sum(x**2 for x in variables)  # Minimalizacja funkcji kwadratowej
+fitness_function = hybrid_fitness
+
+
 
 if __name__ == "__main__":
     start_time = time.time()  # Pomiar czasu
 
     # Inicjalizacja populacji
-    population = Population(number_of_variables=10, precision=5, variables_list=[(-5, 5)] * 10)
+    population = Population(number_of_variables=30, precision=5, variables_list=[(-5, 5)] * 30)
 
 
     # Ewaluacja początkowa
