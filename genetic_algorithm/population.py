@@ -27,10 +27,6 @@ class Population:
             individual.decode_variables()  # Dekodujemy chromosom do wartości rzeczywistych
             individual.fitness = fitness_function(individual.decoded_variables)
 
-    def get_best(self):
-        """Zwraca najlepszego osobnika z populacji."""
-        return max(self.individuals, key=lambda x: x.fitness)
-
     def get_population_size(self):
         """Zwraca liczbę osobników w populacji."""
         return len(self.individuals)

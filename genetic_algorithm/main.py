@@ -19,11 +19,11 @@ if __name__ == "__main__":
     # Inicjalizacja populacji
     population = Population(number_of_variables=30, precision=5, variables_list=[(-5, 5)] * 30)
 
-
+    selected = Selection.tournament_selection(population, num_selected=POPULATION_SIZE, tournament_size=3)
     # Ewaluacja początkowa
     population.evaluate(fitness_function)
-    best_individual = population.get_best()
-    best_fitness = best_individual.fitness
+    best_individuals = selected
+    best_fitness = best_individuals.fitness
 
     # Parametry stopu
     no_improvement_counter = 0
@@ -31,9 +31,11 @@ if __name__ == "__main__":
 
     for epoch in range(EPOCHS):
         print(f"Epoch {epoch + 1}/{EPOCHS}")
-
-        # Selekcja turniejowa
-        selected = Selection.tournament_selection(population, num_selected=POPULATION_SIZE, tournament_size=3)
+        
+        # Strategia elitarna
+        elitism_operator = Elitism(population=population.individuals)
+        elitism_operator.choose_the_best_individuals()
+        elite_individuals = elitism_operator.get_elite_list()
 
         # Krzyżowanie jednopunktowe
         crossover_operator = Crossover(selected, crossover_probability=0.7)
@@ -47,18 +49,17 @@ if __name__ == "__main__":
         for individual in mutated_offspring:
             Inversion.apply_inversion(individual, inversion_probability=0.02)
 
-        # Strategia elitarna
-        elitism_operator = Elitism(population=population.individuals)
-        elitism_operator.choose_the_best_individuals()
-        elite_individuals = elitism_operator.get_elite_list()
 
         # Aktualizacja populacji
         new_population = elite_individuals + mutated_offspring[:POPULATION_SIZE - len(elite_individuals)]
         population.individuals = new_population
         population.evaluate(fitness_function)
 
+         # Selekcja turniejowa
+        selected = Selection.tournament_selection(population, num_selected=POPULATION_SIZE, tournament_size=3)
+
         # Sprawdzamy, czy jest poprawa
-        new_best = population.get_best()
+        new_best = max(selected)
         if new_best.fitness > best_fitness:
             best_fitness = new_best.fitness
             no_improvement_counter = 0  # Reset stagnacji
@@ -73,4 +74,4 @@ if __name__ == "__main__":
     # Pomiar czasu wykonania
     end_time = time.time()
     print(f"Czas wykonania: {end_time - start_time:.2f} s")
-    print(f"Najlepsze rozwiązanie: {best_individual.decoded_variables}, wartość: {best_fitness}")
+    print(f"Najlepsze rozwiązanie: {best_individuals.decoded_variables}, wartość: {best_fitness}")
