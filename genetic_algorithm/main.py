@@ -9,7 +9,7 @@ from genetic_algorithm.config import POPULATION_SIZE, EPOCHS
 from genetic_algorithm.benchmark_functions import sphere_fitness, hybrid_fitness
 
 # Funkcja celu (przykładowa, można podmienić na funkcję testową z CEC)
-fitness_function = hybrid_fitness
+fitness_function = sphere_fitness
 
 
 
