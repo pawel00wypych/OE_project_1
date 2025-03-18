@@ -17,19 +17,43 @@ class Selection:
         # randomly choosing individuals num_selected times, fitness score decide thier probability to be picked
         selected_individuals = []
         available_individuals = population.individuals[:]
-        total_fitness = sum(individual.fitness for individual in population.individuals)
+        
+        # minimal and maximal fitness to define a scaled probabilities
+        min_fitness = min(individual.fitness for individual in available_individuals)
+        max_fitness = max(individual.fitness for individual in available_individuals)
+
+        # identical fitness case
+        if max_fitness == min_fitness:
+            selected_individuals = random.sample(available_individuals, num_selected)
+            return selected_individuals
+
+        # minimal offset to give worst fitness value a chance to be picked 
+        min_offset = 0.01
+        # scaled fitness
+        for individual in available_individuals:
+            scaled_fitness = ((individual.fitness - min_fitness) / (max_fitness - min_fitness)) + min_offset
+            individual.scaled_fitness = scaled_fitness
+
+        total_scaled_fitness = sum(individual.scaled_fitness for individual in available_individuals)
+
+        # chosen individuals 
+        chosen = set()
 
         for _ in range(num_selected):
-            pick = random.uniform(0, total_fitness)
+            pick = random.uniform(0, total_scaled_fitness)
             current = 0
 
             for individual in available_individuals:
-                current += individual.fitness
+                # skipping chosen individuals
+                if individual in chosen:
+                    continue
+
+                current += individual.scaled_fitness
 
                 if current > pick:
                     selected_individuals.append(individual)
-                    available_individuals.remove(individual)
-                    total_fitness -= individual.fitness
+                    chosen.add(individual)
+                    total_scaled_fitness -= individual.scaled_fitness
                     break
 
         return sorted(selected_individuals, key=lambda individual: individual.fitness, reverse=True)

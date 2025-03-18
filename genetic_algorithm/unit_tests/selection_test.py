@@ -1,7 +1,7 @@
 import random
 import sys
 
-sys.path.append('./')
+sys.path.append('../')
 from genetic_algorithm.chromosome import Chromosome
 from genetic_algorithm.selection import Selection
 
