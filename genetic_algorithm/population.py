@@ -2,12 +2,12 @@ from genetic_algorithm.chromosome import Chromosome
 from genetic_algorithm.config import POPULATION_SIZE
 
 class Population:
-    def __init__(self, number_of_variables, precision, variables_list):
+    def __init__(self, number_of_variables, precision, variables_ranges_list):
         """Tworzy populację chromosomów."""
         self.size = POPULATION_SIZE  # Pobieramy wartość z config.py
         self.number_of_variables = number_of_variables
         self.precision = precision
-        self.variables_list = variables_list
+        self.variables_ranges_list = variables_ranges_list
         self.individuals = []  # Lista przechowująca osobniki
 
         self.initialize()
@@ -15,7 +15,7 @@ class Population:
     def initialize(self):
         """Inicjalizuje populację losowymi chromosomami."""
         self.individuals = [
-            Chromosome(self.number_of_variables, self.precision, self.variables_list) 
+            Chromosome(self.number_of_variables, self.precision, self.variables_ranges_list)
             for _ in range(self.size)
         ]
         for individual in self.individuals:

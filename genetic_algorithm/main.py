@@ -6,33 +6,34 @@ from genetic_algorithm.mutation import Mutation
 from genetic_algorithm.inversion import Inversion
 from genetic_algorithm.elitism import Elitism
 from genetic_algorithm.config import POPULATION_SIZE, EPOCHS
-from genetic_algorithm.test_functions import sphere_fitness, hybrid_fitness
+from genetic_algorithm.test_functions import hypersphere_fitness, hybrid_fitness
 
-# Funkcja celu (przykładowa, można podmienić na funkcję testową z CEC)
-fitness_function = sphere_fitness
+# Hypersphere function to test -> 2 variables (x,y)
+fitness_function = hypersphere_fitness
+num_of_variables = 2
 
 
 
 if __name__ == "__main__":
-    start_time = time.time()  # Pomiar czasu
+    start_time = time.time()
 
-    # Inicjalizacja populacji
-    population = Population(number_of_variables=30, precision=5, variables_list=[(-5, 5)] * 30)
+    # Initialize population
+    population = Population(number_of_variables=num_of_variables, precision=5, variables_ranges_list=[(-5, 5)] * num_of_variables)
 
     selected = Selection.tournament_selection(population, num_selected=POPULATION_SIZE, tournament_size=3)
-    # Ewaluacja początkowa
+    # Initial evaluation
     population.evaluate(fitness_function)
     best_individuals = selected
     best_fitness = best_individuals.fitness
 
-    # Parametry stopu
+    # Loop stop parameters
     no_improvement_counter = 0
-    STOP_CRITERIA = 10  # Jeśli przez 10 epok nie ma poprawy, zatrzymaj
+    STOP_CRITERIA = 10  # Stop if there is no improvement for more than STOP_CRITERIA epochs
 
     for epoch in range(EPOCHS):
         print(f"Epoch {epoch + 1}/{EPOCHS}")
         
-        # Strategia elitarna
+        # Elite strategy
         elitism_operator = Elitism(population=population.individuals)
         elitism_operator.choose_the_best_individuals()
         elite_individuals = elitism_operator.get_elite_list()
