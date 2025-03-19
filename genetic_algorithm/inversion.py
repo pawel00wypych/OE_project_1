@@ -10,7 +10,7 @@ class Inversion:
 
         if random.random() <= inversion_probability:
             # length of inversion based on inversion level
-            chromosome_length = len(chromosome.decoded_variables)
+            chromosome_length = chromosome.number_of_bits_chromosome
             inversion_length = int(chromosome_length * inversion_level)
             # randomly choosing chromose frragment to inverse
             start_index = random.randint(0, chromosome_length - inversion_length)

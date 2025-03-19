@@ -1,11 +1,12 @@
 from benchmark_functions import Hypersphere # Sphere Function
 from opfunu.cec_based.cec2014 import F12014  # Hybrid Function 1
 
-# 📌 Sphere function
-sphere_function = Hypersphere()
+# 📌 Sphere function - 2 variables
+hypersphere_function = Hypersphere()
+hypersphere_function_minimum = hypersphere_function.minima
 
-def sphere_fitness(variables):
-    return sphere_function.evaluate(variables)
+def hypersphere_fitness(variables):
+    return hypersphere_function._evaluate(variables)
 
 # 📌 Hybrid Function 1 (Schwefel + Rastrigin + Elliptic)
 hybrid_function = F12014()

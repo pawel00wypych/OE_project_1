@@ -8,7 +8,7 @@ class Selection:
         # sorting individuals in population by fitness, returning num_selected best individuals from the list
         selected_individuals = heapq.nlargest(num_selected, population.individuals, key=lambda individual: individual.fitness)
 
-        return sorted(selected_individuals, key=lambda individual: individual.fitness, reverse=True)
+        return sorted(selected_individuals, key=lambda individual: individual.fitness)
 
     # roulette selection - selection method to choose randomly
     # but better individuals has better chances
@@ -56,7 +56,7 @@ class Selection:
                     total_scaled_fitness -= individual.scaled_fitness
                     break
 
-        return sorted(selected_individuals, key=lambda individual: individual.fitness, reverse=True)
+        return sorted(selected_individuals, key=lambda individual: individual.fitness)
 
     # tournaments selection - selection method to choose the best individals
     # from defined groups
@@ -86,4 +86,4 @@ class Selection:
                 winner = max(tournament, key=lambda individual: individual.fitness)
                 selected_individuals.append(winner)
 
-        return sorted(selected_individuals, key=lambda individual: individual.fitness, reverse=True)
+        return sorted(selected_individuals, key=lambda individual: individual.fitness)

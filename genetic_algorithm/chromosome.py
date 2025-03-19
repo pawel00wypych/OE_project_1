@@ -10,7 +10,7 @@ class Chromosome:
                  chromosome=None,
                  fitness=0):
         """variables_ranges_list - values ranges for all variables
-           ex. for x,y,z -> variables = [(0,5),(-1,7),(2, 8)]
+           ex. for x,y,z -> variables ranges = [(0,5),(-1,7),(2, 8)]
            x = (0,5), y = (-1,7), z = (2, 8)"""
         if chromosome is None:
             chromosome = []
@@ -24,6 +24,7 @@ class Chromosome:
         self.chromosome = chromosome
         self.decoded_variables = []
         self.fitness = fitness
+        self.scaled_fitness = fitness
 
         self.calculate_ranges()
         self.calculate_number_of_bits()
