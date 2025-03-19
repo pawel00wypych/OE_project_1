@@ -2,7 +2,7 @@ from genetic_algorithm.chromosome import Chromosome
 from genetic_algorithm.config import POPULATION_SIZE
 
 class Population:
-    def __init__(self, number_of_variables, precision, variables_ranges_list, individuals):
+    def __init__(self, number_of_variables, precision, variables_ranges_list, individuals=None):
         """Tworzy populację chromosomów."""
         self.size = POPULATION_SIZE  # Pobieramy wartość z config.py
         self.number_of_variables = number_of_variables
