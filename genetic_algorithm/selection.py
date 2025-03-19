@@ -83,7 +83,7 @@ class Selection:
         # skipping empty tournaments
         for tournament in tournaments:
             if tournament:
-                winner = max(tournament, key=lambda individual: individual.fitness)
+                winner = min(tournament, key=lambda individual: individual.fitness)
                 selected_individuals.append(winner)
 
         return sorted(selected_individuals, key=lambda individual: individual.fitness)

@@ -13,9 +13,10 @@ hypersphere_function = Hypersphere()
 # Hypersphere function to test -> 2 variables (x,y)
 fitness_function = hypersphere_fitness
 num_of_variables = 2
-crossover_probability = 0.8
+mutation_probability = 0.25
+crossover_probability = 0.7
 variables_ranges_list=[(-5, 5)]
-precision = 5
+precision = 6
 expected_minimum = hypersphere_function.minimum()
 
 # Hybrid function to test -> 2 variables (x,y)
@@ -33,7 +34,7 @@ if __name__ == "__main__":
     # Initial evaluation
     population.evaluate(fitness_function)
 
-    selected = Selection.tournament_selection(population, num_selected=POPULATION_SIZE, tournament_size=3)
+    selected = Selection.tournament_selection(population, num_selected=POPULATION_SIZE)
 
     # We need this parameter to check if there is any improvement
     best_fitness = selected[0].fitness
@@ -43,7 +44,7 @@ if __name__ == "__main__":
     STOP_CRITERIA = EPOCHS  # Stop if there is no improvement for more than STOP_CRITERIA epochs
 
     for epoch in range(EPOCHS):
-        print(f"Epoch {epoch + 1}/{EPOCHS}")
+        print(f"Epoch {epoch + 1}/{EPOCHS}  best fitness = {best_fitness}")
         
         # Elite strategy
         elitism_operator = Elitism(population=population.individuals)
@@ -55,7 +56,7 @@ if __name__ == "__main__":
         offspring = crossover_operator.single_point_crossover()
 
         # Single point mutation
-        mutation_operator = Mutation(offspring, mutation_probability=0.05)
+        mutation_operator = Mutation(offspring, mutation_probability)
         mutated_offspring = mutation_operator.single_point_mutation()
 
         # Inversion
@@ -71,7 +72,7 @@ if __name__ == "__main__":
         population.evaluate(fitness_function)
 
          # Tournament selection
-        selected = Selection.tournament_selection(population, num_selected=POPULATION_SIZE, tournament_size=3)
+        selected = Selection.tournament_selection(population, num_selected=POPULATION_SIZE)
         new_best_fitness = selected[0].fitness
 
         # Check if there is any improvement
