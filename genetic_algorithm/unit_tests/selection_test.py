@@ -46,6 +46,6 @@ if __name__ == "__main__":
 
     # Testing tournament selection
     print("\nTournament Selection:")
-    selected_by_tournament = Selection.tournament_selection(population, num_selected=3, tournament_size=4)
+    selected_by_tournament = Selection.tournament_selection(population, num_selected=3)
     for individual in selected_by_tournament:
         print(f"Fitness: {individual.fitness}, Decoded: {individual.decoded_variables}")

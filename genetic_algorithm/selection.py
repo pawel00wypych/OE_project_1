@@ -61,27 +61,29 @@ class Selection:
     # tournaments selection - selection method to choose the best individals
     # from defined groups
     @staticmethod
-    def tournament_selection(population, num_selected, tournament_size):
-        # creating a num_selected number of tournaments by random samples based on tournament size
+    def tournament_selection(population, num_selected):
+        # creating a num_selected number of tournaments by random samples
         # choosing the best individuals from tournaments
         available_individuals = population.individuals[:]
         random.shuffle(available_individuals)
         selected_individuals = []
 
-        if tournament_size > len(population.individuals):
-            tournament_size = len(population.individuals)
-
-        tournaments = [available_individuals[i:i + tournament_size] for i in range(0, len(available_individuals), tournament_size)]
+        # the base size of the tournament
+        base_size = len(available_individuals) // num_selected
+        extra = len(available_individuals) % num_selected
+        
+        # adding extra individuals to the first tournaments
+        tournaments = []
+        index = 0
+        for i in range(num_selected):
+            size = base_size + (1 if i < extra else 0)
+            tournaments.append(available_individuals[index:index + size])
+            index += size
 
         # skipping empty tournaments
         for tournament in tournaments:
-            if not tournament:
-                continue  
-
-            winner = max(tournament, key=lambda individual: individual.fitness)
-            selected_individuals.append(winner)
-
-            if len(selected_individuals) >= num_selected:
-                break
+            if tournament:
+                winner = max(tournament, key=lambda individual: individual.fitness)
+                selected_individuals.append(winner)
 
         return sorted(selected_individuals, key=lambda individual: individual.fitness, reverse=True)
