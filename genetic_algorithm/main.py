@@ -6,25 +6,23 @@ from genetic_algorithm.mutation import Mutation
 from genetic_algorithm.inversion import Inversion
 from genetic_algorithm.elitism import Elitism
 from genetic_algorithm.config import POPULATION_SIZE, EPOCHS
-from genetic_algorithm.test_functions import hypersphere_fitness, hybrid_fitness
+from genetic_algorithm.evaluation_functions import hypersphere_fitness, hybrid_fitness
 
 # Hypersphere function to test -> 2 variables (x,y)
 fitness_function = hypersphere_fitness
 num_of_variables = 2
-
-
 
 if __name__ == "__main__":
     start_time = time.time()
 
     # Initialize population
     population = Population(number_of_variables=num_of_variables, precision=5, variables_ranges_list=[(-5, 5)] * num_of_variables)
-
-    selected = Selection.tournament_selection(population, num_selected=POPULATION_SIZE, tournament_size=3)
     # Initial evaluation
     population.evaluate(fitness_function)
-    best_individuals = selected
-    best_fitness = best_individuals.fitness
+
+    best_individuals_after_selection = Selection.tournament_selection(population, num_selected=POPULATION_SIZE, tournament_size=3)
+
+    best_fitness = best_individuals_after_selection.fitness
 
     # Loop stop parameters
     no_improvement_counter = 0

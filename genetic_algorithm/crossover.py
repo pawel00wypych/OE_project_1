@@ -2,13 +2,15 @@ import random
 import genetic_algorithm.chromosome as chromosome
 
 class  Crossover:
-    def __init__(self, population,crossover_probability):
+    def __init__(self, population,crossover_probability,num_of_elite_individuals):
         self.population = population
         self.crossover_probability = crossover_probability
+        self.num_of_elite_individuals = num_of_elite_individuals
+        self.new_pop_size = len(self.population) - self.num_of_elite_individuals
 
     def single_point_crossover(self):
         new_population = []
-        for i in range(len(self.population) // 2):
+        for i in range(self.new_pop_size // 2):
             chromo1, chromo2 = random.sample(self.population, 2)
             if self.decide_to_crossover():
                 crossover_point = random.randint(1,chromo1.number_of_bits_chromosome-1)
@@ -25,7 +27,7 @@ class  Crossover:
 
     def two_point_crossover(self):
         new_population = []
-        for i in range(len(self.population) // 2):
+        for i in range(self.new_pop_size // 2):
             chromo1, chromo2 = random.sample(self.population,2)
             if self.decide_to_crossover():
                 point1, point2 = sorted(random.sample(range(1, chromo1.number_of_bits_chromosome-1), 2))
@@ -44,7 +46,7 @@ class  Crossover:
 
     def uniform_crossover(self):
         new_population = []
-        for i in range(len(self.population) // 2):
+        for i in range(self.new_pop_size // 2):
             chromo1, chromo2 = random.sample(self.population, 2)
             if self.decide_to_crossover():
                 new_genes1 = [None] * chromo1.number_of_bits_chromosome
@@ -70,7 +72,7 @@ class  Crossover:
 
     def granular_crossover(self):
         new_population = []
-        for i in range(len(self.population) // 2):
+        for i in range(self.new_pop_size // 2):
             chromo1, chromo2 = random.sample(self.population, 2)
             if self.decide_to_crossover():
                 new_genes1 = []
