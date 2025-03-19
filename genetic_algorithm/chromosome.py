@@ -24,6 +24,7 @@ class Chromosome:
         self.chromosome = chromosome
         self.decoded_variables = []
         self.fitness = fitness
+        self.scaled_fitness = fitness
 
         self.calculate_ranges()
         self.calculate_number_of_bits()
