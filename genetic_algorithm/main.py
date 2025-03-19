@@ -15,16 +15,20 @@ fitness_function = hypersphere_fitness
 num_of_variables = 2
 mutation_probability = 0.25
 crossover_probability = 0.7
+inversion_probability = 0.02
 variables_ranges_list=[(-5, 5)]
 precision = 6
 expected_minimum = hypersphere_function.minimum()
 
-# Hybrid function to test -> 2 variables (x,y)
+# Hybrid function to test
 # fitness_function = hypersphere_fitness
 # num_of_variables = 2
-# crossover_probability = 0.8
+# mutation_probability = 0.25
+# crossover_probability = 0.7
+# inversion_probability = 0.02
 # variables_ranges_list=[(-5, 5)]
-# precision = 5
+# precision = 6
+# expected_minimum =
 
 if __name__ == "__main__":
     start_time = time.time()
@@ -61,7 +65,7 @@ if __name__ == "__main__":
 
         # Inversion
         for individual in mutated_offspring:
-            Inversion.apply_inversion(individual, inversion_probability=0.02)
+            Inversion.apply_inversion(individual, inversion_probability)
 
 
         # Population replacement
