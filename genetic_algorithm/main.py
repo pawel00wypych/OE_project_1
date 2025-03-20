@@ -1,5 +1,7 @@
 import time
 import sqlite3
+from datetime import datetime
+import os
 import evaluation_functions
 from genetic_algorithm.population import Population
 from genetic_algorithm.selection import Selection
@@ -34,7 +36,8 @@ def set_params_hypersphere():
      variables_ranges_list=[(-5, 5)]
      precision = 6
      expected_minimum = evaluation_functions.get_hypersphere_minimum()
-     db_name = "hypersphere.db"
+     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+     db_name = f"hypersphere_{timestamp}.db"
 
 def set_params_hybrid():
     # Hybrid function to test
@@ -51,13 +54,40 @@ def set_params_hybrid():
     variables_ranges_list=[(-100, 100)]
     precision = 6
     expected_minimum = evaluation_functions.get_cec_hybrid_minimum()
-    db_name = "cec_hybrid_fun_1.db"
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    db_name = f"cec_hybrid_fun_1_{timestamp}.db"
+
+def save_params_to_file(best_solution):
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    directory = "params"
+    filename = f"params_{timestamp}.txt"
+    file_path = os.path.join(directory, filename)
+
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    with open(file_path,"w") as file:
+        file.write(f"fitness_function:{fitness_function}\n")
+        file.write(f"num_of_variables:{num_of_variables}\n")
+        file.write(f"mutation_probability:{mutation_probability}\n")
+        file.write(f"crossover_probability:{crossover_probability}\n")
+        file.write(f"inversion_probability:{inversion_probability}\n")
+        file.write(f"variables_ranges_list:{variables_ranges_list}\n")
+        file.write(f"precision:{precision}\n")
+        file.write(f"expected_minimum:{expected_minimum}\n")
+        file.write(f"db_name:{db_name}\n")
+        file.write(best_solution+"\n")
 
 
 if __name__ == "__main__":
     choose_function("hypersphere")
+    directory = "sqlite_folder"
+    db_path = os.path.join(directory, db_name)
 
-    conn = sqlite3.connect(db_name)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS epochs (
@@ -133,5 +163,6 @@ if __name__ == "__main__":
     end_time = time.time()
     print(f"Elapsed time: {end_time - start_time:.2f} s")
     print(f"Best solution: {selected[0].decoded_variables}, fitness value: {best_fitness}  best expected solution: {expected_minimum}")
+    save_params_to_file(f"Best solution: {selected[0].decoded_variables}, fitness value: {best_fitness}  best expected solution: {expected_minimum}")
     conn.commit()
     conn.close()
