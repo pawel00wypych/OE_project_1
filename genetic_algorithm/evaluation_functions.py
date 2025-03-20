@@ -8,8 +8,14 @@ hypersphere_function_minimum = hypersphere_function.minima
 def hypersphere_fitness(variables):
     return hypersphere_function._evaluate(variables)
 
+def get_hypersphere_minimum():
+    return hypersphere_function.minimum()
+
 # 📌 Hybrid Function 1 (Schwefel + Rastrigin + Elliptic)
 hybrid_function = F12014()
 
 def hybrid_fitness(variables):
     return hybrid_function.evaluate(variables)
+
+def get_cec_hybrid_minimum():
+    return hybrid_function.f_global, tuple(hybrid_function.x_global)
