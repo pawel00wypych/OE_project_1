@@ -1,5 +1,6 @@
 import time
 import sqlite3
+import evaluation_functions
 from genetic_algorithm.population import Population
 from genetic_algorithm.selection import Selection
 from genetic_algorithm.crossover import Crossover
@@ -7,31 +8,29 @@ from genetic_algorithm.mutation import Mutation
 from genetic_algorithm.inversion import Inversion
 from genetic_algorithm.elitism import Elitism
 from genetic_algorithm.config import POPULATION_SIZE, EPOCHS
-from genetic_algorithm.evaluation_functions import hypersphere_fitness, hybrid_fitness
-from benchmark_functions import Hypersphere # Sphere Function
-hypersphere_function = Hypersphere()
-
 
 # Hypersphere function to test -> 2 variables (x,y)
-fitness_function = hypersphere_fitness
-num_of_variables = 2
-mutation_probability = 0.25
-crossover_probability = 0.7
-inversion_probability = 0.02
-variables_ranges_list=[(-5, 5)]
-precision = 6
-expected_minimum = hypersphere_function.minimum()
-db_name = "hypersphere.db"
-
-# Hybrid function to test
-# fitness_function = hypersphere_fitness
-# num_of_variables = 30
+# fitness_function = evaluation_functions.hypersphere_fitness
+# num_of_variables = 2
 # mutation_probability = 0.25
 # crossover_probability = 0.7
 # inversion_probability = 0.02
-# variables_ranges_list=[(-100, 100)]
+# variables_ranges_list=[(-5, 5)]
 # precision = 6
-# expected_minimum =
+# expected_minimum = evaluation_functions.get_hypersphere_minimum()
+# db_name = "hypersphere.db"
+
+# Hybrid function to test
+fitness_function = evaluation_functions.hybrid_fitness
+num_of_variables = 30
+mutation_probability = 0.25
+crossover_probability = 0.7
+inversion_probability = 0.02
+variables_ranges_list=[(-100, 100)]
+precision = 6
+expected_minimum = evaluation_functions.get_cec_hybrid_minimum()
+db_name = "cec_hybrid_fun_1.db"
+
 
 if __name__ == "__main__":
     conn = sqlite3.connect(db_name)
