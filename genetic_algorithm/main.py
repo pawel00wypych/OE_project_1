@@ -1,4 +1,5 @@
 import time
+import sqlite3
 from genetic_algorithm.population import Population
 from genetic_algorithm.selection import Selection
 from genetic_algorithm.crossover import Crossover
@@ -10,6 +11,7 @@ from genetic_algorithm.evaluation_functions import hypersphere_fitness, hybrid_f
 from benchmark_functions import Hypersphere # Sphere Function
 hypersphere_function = Hypersphere()
 
+
 # Hypersphere function to test -> 2 variables (x,y)
 fitness_function = hypersphere_fitness
 num_of_variables = 2
@@ -19,18 +21,30 @@ inversion_probability = 0.02
 variables_ranges_list=[(-5, 5)]
 precision = 6
 expected_minimum = hypersphere_function.minimum()
+db_name = "hypersphere.db"
 
 # Hybrid function to test
 # fitness_function = hypersphere_fitness
-# num_of_variables = 2
+# num_of_variables = 30
 # mutation_probability = 0.25
 # crossover_probability = 0.7
 # inversion_probability = 0.02
-# variables_ranges_list=[(-5, 5)]
+# variables_ranges_list=[(-100, 100)]
 # precision = 6
 # expected_minimum =
 
 if __name__ == "__main__":
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS epochs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            fitness TEXT NOT NULL,
+            variables TEXT NOT NULL,
+            expected_result NOT NULL
+        )
+    ''')
+
     start_time = time.time()
 
     # Initialize population
@@ -86,6 +100,8 @@ if __name__ == "__main__":
         else:
             no_improvement_counter += 1
 
+        cursor.execute("INSERT INTO epochs (fitness, variables, expected_result) VALUES (?, ?, ?)", (best_fitness, str(selected[0].decoded_variables),str(expected_minimum)))
+
         # End of evolution condition - check no-improvement counter
         if no_improvement_counter >= STOP_CRITERIA:
             print(f"Algorithm stopped – no improvement for {STOP_CRITERIA} epochs")
@@ -94,3 +110,5 @@ if __name__ == "__main__":
     end_time = time.time()
     print(f"Elapsed time: {end_time - start_time:.2f} s")
     print(f"Best solution: {selected[0].decoded_variables}, fitness value: {best_fitness}  best expected solution: {expected_minimum}")
+    conn.commit()
+    conn.close()
