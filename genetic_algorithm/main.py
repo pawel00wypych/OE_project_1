@@ -9,30 +9,54 @@ from genetic_algorithm.inversion import Inversion
 from genetic_algorithm.elitism import Elitism
 from genetic_algorithm.config import POPULATION_SIZE, EPOCHS
 
-# Hypersphere function to test -> 2 variables (x,y)
-# fitness_function = evaluation_functions.hypersphere_fitness
-# num_of_variables = 2
-# mutation_probability = 0.25
-# crossover_probability = 0.7
-# inversion_probability = 0.02
-# variables_ranges_list=[(-5, 5)]
-# precision = 6
-# expected_minimum = evaluation_functions.get_hypersphere_minimum()
-# db_name = "hypersphere.db"
+global fitness_function, num_of_variables, mutation_probability
+global crossover_probability, inversion_probability, variables_ranges_list
+global precision, expected_minimum, db_name
 
-# Hybrid function to test
-fitness_function = evaluation_functions.hybrid_fitness
-num_of_variables = 30
-mutation_probability = 0.25
-crossover_probability = 0.7
-inversion_probability = 0.02
-variables_ranges_list=[(-100, 100)]
-precision = 6
-expected_minimum = evaluation_functions.get_cec_hybrid_minimum()
-db_name = "cec_hybrid_fun_1.db"
+def choose_function(fun_name):
+    if fun_name == 'hypersphere':
+        set_params_hypersphere()
+    elif fun_name == 'hybrid':
+        set_params_hybrid()
+
+def set_params_hypersphere():
+     # Hypersphere function to test -> 2 variables (x,y)
+
+     global fitness_function, num_of_variables, mutation_probability
+     global crossover_probability, inversion_probability, variables_ranges_list
+     global precision, expected_minimum, db_name
+
+     fitness_function = evaluation_functions.hypersphere_fitness
+     num_of_variables = 2
+     mutation_probability = 0.25
+     crossover_probability = 0.7
+     inversion_probability = 0.02
+     variables_ranges_list=[(-5, 5)]
+     precision = 6
+     expected_minimum = evaluation_functions.get_hypersphere_minimum()
+     db_name = "hypersphere.db"
+
+def set_params_hybrid():
+    # Hybrid function to test
+
+    global fitness_function, num_of_variables, mutation_probability
+    global crossover_probability, inversion_probability, variables_ranges_list
+    global precision, expected_minimum, db_name
+
+    fitness_function = evaluation_functions.hybrid_fitness
+    num_of_variables = 30
+    mutation_probability = 0.25
+    crossover_probability = 0.7
+    inversion_probability = 0.02
+    variables_ranges_list=[(-100, 100)]
+    precision = 6
+    expected_minimum = evaluation_functions.get_cec_hybrid_minimum()
+    db_name = "cec_hybrid_fun_1.db"
 
 
 if __name__ == "__main__":
+    choose_function("hypersphere")
+
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     cursor.execute('''
