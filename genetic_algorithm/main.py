@@ -2,7 +2,7 @@ import time
 import sqlite3
 from datetime import datetime
 import os
-import evaluation_functions
+from genetic_algorithm import evaluation_functions
 from genetic_algorithm.population import Population
 from genetic_algorithm.selection import Selection
 from genetic_algorithm.crossover import Crossover
