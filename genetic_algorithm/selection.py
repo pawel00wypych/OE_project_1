@@ -6,7 +6,7 @@ class Selection:
     @staticmethod
     def best_selection(population, num_selected):
         # sorting individuals in population by fitness, returning num_selected best individuals from the list
-        selected_individuals = heapq.nlargest(num_selected, population.individuals, key=lambda individual: individual.fitness)
+        selected_individuals = heapq.nsmallest(num_selected, population.individuals, key=lambda individual: individual.fitness)
 
         return sorted(selected_individuals, key=lambda individual: individual.fitness)
 
@@ -27,11 +27,11 @@ class Selection:
             selected_individuals = random.sample(available_individuals, num_selected)
             return selected_individuals
 
-        # minimal offset to give worst fitness value a chance to be picked 
+        # minimal offset to give worst fitness value a chance to be picked in reverse - smaller fitness = better chance 
         min_offset = 0.01
         # scaled fitness
         for individual in available_individuals:
-            scaled_fitness = ((individual.fitness - min_fitness) / (max_fitness - min_fitness)) + min_offset
+            scaled_fitness = ((max_fitness - individual.fitness) / (max_fitness - min_fitness)) + min_offset
             individual.scaled_fitness = scaled_fitness
 
         total_scaled_fitness = sum(individual.scaled_fitness for individual in available_individuals)
