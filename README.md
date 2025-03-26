@@ -11,7 +11,7 @@ for example, 5, 10, 20, or 27 variables).
 
 ### How to clone repo and recreate conda env:
 
-- ```git clone https://github.com/pawel00wypych/OE_project_1.git```
+- ```git clone https://github.com/pawel00wypych/Evolutionary-Computations-Binary-Chromosome.git```
 
 - ```conda env create -f environment.yml```
 
