@@ -32,7 +32,7 @@ def save_params_to_file(best_solution, config):
         file.write(f"variables_ranges_list:{config['variables_ranges_list']}\n")
         file.write(f"precision:{config['precision']}\n")
         file.write(f"expected_minimum:{config['expected_minimum']}\n")
-        file.write(f"db_name:{config['fitness_function']}.db\n")
+        file.write(f"db_name:{config['fitness_function'].__name__}.db\n")
         file.write(best_solution+"\n")
 
 def run_genetic_algorithm(config):
@@ -65,6 +65,7 @@ def run_genetic_algorithm(config):
     mutation_probability = config["mutation_probability"]
     crossover_probability = config["crossover_probability"]
     inversion_probability = config["inversion_probability"]
+    inversion_level = config["inversion_level"]
     variables_ranges_list = config["variables_ranges_list"]
     precision = config["precision"]
     expected_minimum = config["expected_minimum"]
@@ -91,6 +92,7 @@ def run_genetic_algorithm(config):
     # Initial evaluation
     population.evaluate(fitness_function)
 
+
     selection_map = {
         "tournament": Selection.tournament_selection,
         "roulette": Selection.roulette_selection,
@@ -100,8 +102,8 @@ def run_genetic_algorithm(config):
     crossover_map = {
         "single": Crossover.single_point_crossover,
         "two": Crossover.two_point_crossover,
-        "uniform": Crossover.uniform_crossover,
-        "granular": Crossover.granular_crossover
+        "granular": Crossover.granular_crossover,
+        "uniform": Crossover.uniform_crossover
     }
 
     mutation_map = {
@@ -109,6 +111,9 @@ def run_genetic_algorithm(config):
         "two": Mutation.two_point_mutation,
         "edge": Mutation.edge_mutation
     }
+
+    selected = selection_map[selection_method](population, selection_type = selection_type, num_selected=population.size) # selection_type <- min or max
+    best_fitness = selected[0].fitness
 
     # Loop stop parameters
     no_improvement_counter = 0
@@ -131,7 +136,7 @@ def run_genetic_algorithm(config):
 
         # Inversion
         for individual in mutated_offspring:
-            Inversion.apply_inversion(individual, inversion_probability)
+            Inversion.apply_inversion(individual, inversion_probability, inversion_level)
 
         # Population replacement
         new_population = elite_individuals + mutated_offspring
@@ -141,16 +146,20 @@ def run_genetic_algorithm(config):
         population.evaluate(fitness_function)
 
         # Selection
-        new_best_fitness = selection_map[selection_method](population, selection_type, num_selected=population.size) # selection_type <- min or max
+        selected = selection_map[selection_method](population, selection_type = selection_type, num_selected=population.size) # selection_type <- min or max
+        new_best_fitness = selected[0].fitness
 
         # Check if there is any improvement
-        if selection_method == "min":
+        if selection_type == "min":
+            print("min")
             if new_best_fitness < best_fitness:
                 best_fitness = new_best_fitness
                 no_improvement_counter = 0
             else:
                 no_improvement_counter += 1
-        else:
+        elif selection_type == "max":
+            print("max")
+
             if new_best_fitness > best_fitness:
                 best_fitness = new_best_fitness
                 no_improvement_counter = 0
@@ -161,11 +170,10 @@ def run_genetic_algorithm(config):
         fitness_values = [ind.fitness for ind in population.individuals]
         avg_fitness = mean(fitness_values)
         std_fitness = stdev(fitness_values) if len(fitness_values) > 1 else 0
-        best_individual = min(population.individuals, key=lambda ind: ind.fitness)
 
-        cursor.execute("INSERT INTO epochs (fitness, variables, expected_result) VALUES (?, ?, ?)",(best_fitness, str(best_individual), str(expected_minimum)))
+        cursor.execute("INSERT INTO epochs (fitness, variables, expected_result) VALUES (?, ?, ?)",(best_fitness, str(selected[0].decoded_variables), str(expected_minimum)))
 
-        print(f"Epoch {epoch} best solution: {best_individual.decoded_variables}, fitness value: {best_fitness}  best expected solution: {expected_minimum}")
+        print(f"Epoch {epoch} best solution: {selected[0].decoded_variables}, fitness value: {best_fitness}  best expected solution: {expected_minimum}")
 
         history["best_fitness"].append(best_fitness)
         history["avg_fitness"].append(avg_fitness)
@@ -179,17 +187,14 @@ def run_genetic_algorithm(config):
     execution_time = end_time - start_time
 
     result = {
-        "best_solution": best_individual.decoded_variables,
-        "best_fitness": best_individual.fitness,
+        "best_solution": selected[0].decoded_variables,
+        "best_fitness": best_fitness,
         "expected_minimum": expected_minimum,
         "execution_time": execution_time,
         "history": history
     }
 
-    end_time = time.time()
-    print(f"Elapsed time: {end_time - start_time:.2f} s")
-    print(f"Best solution: {best_individual.decoded_variables}, fitness value: {best_fitness}  best expected solution: {expected_minimum}")
-    save_params_to_file(f"Best solution: {best_individual.decoded_variables}, fitness value: {best_fitness}  best expected solution: {expected_minimum}", config)
+    save_params_to_file(f"Best solution: {selected[0].decoded_variables}, fitness value: {best_fitness}  best expected solution: {expected_minimum}", config)
     conn.commit()
     conn.close()
 

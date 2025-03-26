@@ -11,6 +11,9 @@ def hypersphere_fitness(variables):
 def get_hypersphere_minimum():
     return hypersphere_function.minimum()
 
+def get_hypersphere_maximum():
+    return hypersphere_function.maximum()
+
 # 📌 Hybrid Function 1 (Schwefel + Rastrigin + Elliptic)
 hybrid_function = F12014()
 

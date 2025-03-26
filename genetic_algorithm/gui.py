@@ -35,6 +35,7 @@ class GeneticApp(tk.Tk):
         self.crossover_prob_entry = field("Crossover probability (0-1):")
         self.mutation_prob_entry = field("Mutation probability (0-1):")
         self.inversion_prob_entry = field("Inversion probability (0-1):")
+        self.inversion_level_entry = field("inversion_level (0-1):")
 
         # --- SELECTION METHODS ---
         def combo(label, values):
@@ -48,7 +49,7 @@ class GeneticApp(tk.Tk):
 
         self.selection_var = combo("Selection method:", ["tournament", "roulette", "best"])
         self.selection_type_var = combo("Selection method:", ["min", "max"])
-        self.crossover_var = combo("Crossover method:", ["single", "two", "uniform", "granular"])
+        self.crossover_var = combo("Crossover method:", ["single", "two", "granular", "uniform"])
         self.mutation_var = combo("Mutation method:", ["single", "two", "edge"])
 
         # --- START BUTTON ---
@@ -69,11 +70,12 @@ class GeneticApp(tk.Tk):
             crossover_p = float(self.crossover_prob_entry.get())
             mutation_p = float(self.mutation_prob_entry.get())
             inversion_p = float(self.inversion_prob_entry.get())
+            inversion_level = float(self.inversion_level_entry.get())
             selection = self.selection_var.get()
             selection_type = self.selection_type_var.get()
             crossover = self.crossover_var.get()
             mutation = self.mutation_var.get()
-            stop_criteria = self.stop_criteria_var.get()
+            stop_criteria = int(self.stop_criteria_var.get())
 
             # --- Function setup ---
             if fun_name == "Hypersphere":
@@ -95,6 +97,7 @@ class GeneticApp(tk.Tk):
                 "mutation_probability": mutation_p,
                 "crossover_probability": crossover_p,
                 "inversion_probability": inversion_p,
+                "inversion_level": inversion_level,
                 "selection_method": selection,
                 "selection_type": selection_type,
                 "crossover_method": crossover,
