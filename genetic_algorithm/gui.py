@@ -16,7 +16,7 @@ class GeneticApp(tk.Tk):
         ttk.Label(self, text="Function:").pack(pady=(10, 0))
         self.function_var = tk.StringVar()
         self.function_box = ttk.Combobox(self, textvariable=self.function_var, state="readonly")
-        self.function_box["values"] = ["Hypersphere", "Hybrid CEC 2014 (F1)"]
+        self.function_box["values"] = ["Hypersphere", "Hybrid CEC 2014 (F1)", "Rana", "Composition 6"]
         self.function_box.current(0)
         self.function_box.pack()
 
@@ -80,11 +80,25 @@ class GeneticApp(tk.Tk):
             # --- Function setup ---
             if fun_name == "Hypersphere":
                 fitness = evaluation_functions.hypersphere_fitness
-                expected = evaluation_functions.get_hypersphere_minimum()
+                if selection_type == "min":
+                    expected = evaluation_functions.get_hypersphere_minimum()
+                else:
+                    expected = evaluation_functions.get_hypersphere_maximum()
                 ranges = [(-5, 5)]
-            else:
+            elif fun_name == "Hybrid CEC 2014 (F1)":
                 fitness = evaluation_functions.hybrid_fitness
                 expected = evaluation_functions.get_cec_hybrid_minimum()
+                ranges = [(-100, 100)]
+            elif fun_name == "Rana":
+                fitness = evaluation_functions.rana_fitness
+                if selection_type == "min":
+                    expected = evaluation_functions.get_rana_minimum()
+                else:
+                    expected = evaluation_functions.get_rana_maximum()
+                ranges = [(-512, 512)]
+            elif fun_name == "Composition 6":
+                fitness = evaluation_functions.composition_6_fitness
+                expected = evaluation_functions.get_cec_composition_6_minimum()
                 ranges = [(-100, 100)]
 
             # --- Create config dict ---
