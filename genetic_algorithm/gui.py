@@ -27,6 +27,7 @@ class GeneticApp(tk.Tk):
             entry.pack()
             return entry
 
+        self.stop_criteria_var = field("Num of epochs without change to stop:")
         self.variables_entry = field("Number of variables:")
         self.precision_entry = field("Precision (e.g. 6):")
         self.population_entry = field("Population size:")
@@ -46,6 +47,7 @@ class GeneticApp(tk.Tk):
             return var
 
         self.selection_var = combo("Selection method:", ["tournament", "roulette", "best"])
+        self.selection_type_var = combo("Selection method:", ["min", "max"])
         self.crossover_var = combo("Crossover method:", ["single", "two", "uniform", "granular"])
         self.mutation_var = combo("Mutation method:", ["single", "two", "edge"])
 
@@ -68,8 +70,10 @@ class GeneticApp(tk.Tk):
             mutation_p = float(self.mutation_prob_entry.get())
             inversion_p = float(self.inversion_prob_entry.get())
             selection = self.selection_var.get()
+            selection_type = self.selection_type_var.get()
             crossover = self.crossover_var.get()
             mutation = self.mutation_var.get()
+            stop_criteria = self.stop_criteria_var.get()
 
             # --- Function setup ---
             if fun_name == "Hypersphere":
@@ -92,10 +96,12 @@ class GeneticApp(tk.Tk):
                 "crossover_probability": crossover_p,
                 "inversion_probability": inversion_p,
                 "selection_method": selection,
+                "selection_type": selection_type,
                 "crossover_method": crossover,
                 "mutation_method": mutation,
                 "epochs": epochs,
-                "population_size": population
+                "population_size": population,
+                "stop_criteria": stop_criteria
             }
 
             # --- Run algorithm ---

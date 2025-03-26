@@ -69,10 +69,12 @@ def run_genetic_algorithm(config):
     precision = config["precision"]
     expected_minimum = config["expected_minimum"]
     selection_method = config["selection_method"]
+    selection_type = config["selection_type"] # min or max
     crossover_method = config["crossover_method"]
     mutation_method = config["mutation_method"]
     epochs = config["epochs"]
     population_size = config["population_size"]
+    stop_criteria = config["stop_criteria"]
 
     history = {
         "best_fitness": [],
@@ -82,8 +84,11 @@ def run_genetic_algorithm(config):
 
     start_time = time.time()
 
+    # Initialize population
     population = Population(num_of_variables, precision, variables_ranges_list * num_of_variables)
     population.size = population_size
+
+    # Initial evaluation
     population.evaluate(fitness_function)
 
     selection_map = {
@@ -104,27 +109,56 @@ def run_genetic_algorithm(config):
         "two": Mutation.two_point_mutation,
         "edge": Mutation.edge_mutation
     }
-    print(f"epochs:{epochs}" )
+
+    # Loop stop parameters
+    no_improvement_counter = 0
+    STOP_CRITERIA = stop_criteria # Stop if there is no improvement for more than STOP_CRITERIA epochs
+
     for epoch in range(epochs):
+
+        # Elite strategy
         elitism_operator = Elitism(population=population.individuals)
         elitism_operator.choose_the_best_individuals()
         elite_individuals = elitism_operator.get_elite_list()
 
+        # Crossover
         crossover_operator = Crossover(population.individuals, crossover_probability, elitism_operator.number_of_elites)
-        offspring = crossover_map[crossover_method](crossover_operator)
+        offspring = crossover_map[crossover_method](crossover_operator)  # Equivalent to: offspring = crossover_operator.single_point_crossover()
 
+        # Mutation
         mutation_operator = Mutation(offspring, mutation_probability)
         mutated_offspring = mutation_map[mutation_method](mutation_operator)
 
+        # Inversion
         for individual in mutated_offspring:
             Inversion.apply_inversion(individual, inversion_probability)
 
+        # Population replacement
         new_population = elite_individuals + mutated_offspring
         population.individuals = new_population
+
+        # Evaluation
         population.evaluate(fitness_function)
 
+        # Selection
+        new_best_fitness = selection_map[selection_method](population, selection_type, num_selected=population.size) # selection_type <- min or max
+
+        # Check if there is any improvement
+        if selection_method == "min":
+            if new_best_fitness < best_fitness:
+                best_fitness = new_best_fitness
+                no_improvement_counter = 0
+            else:
+                no_improvement_counter += 1
+        else:
+            if new_best_fitness > best_fitness:
+                best_fitness = new_best_fitness
+                no_improvement_counter = 0
+            else:
+                no_improvement_counter += 1
+
+
         fitness_values = [ind.fitness for ind in population.individuals]
-        best_fitness = min(fitness_values)
         avg_fitness = mean(fitness_values)
         std_fitness = stdev(fitness_values) if len(fitness_values) > 1 else 0
         best_individual = min(population.individuals, key=lambda ind: ind.fitness)
@@ -136,6 +170,10 @@ def run_genetic_algorithm(config):
         history["best_fitness"].append(best_fitness)
         history["avg_fitness"].append(avg_fitness)
         history["std_fitness"].append(std_fitness)
+
+        if no_improvement_counter >= STOP_CRITERIA:
+            print(f"Algorithm stopped – no improvement for {STOP_CRITERIA} epochs")
+            break
 
     end_time = time.time()
     execution_time = end_time - start_time
