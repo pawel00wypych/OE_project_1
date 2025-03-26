@@ -4,8 +4,6 @@ from matplotlib import pyplot as plt
 from genetic_algorithm import evaluation_functions
 from main import run_genetic_algorithm
 
-
-
 class GeneticApp(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -119,21 +117,21 @@ class GeneticApp(tk.Tk):
 
     def plot_results(self, history):
         plt.figure()
-        plt.plot(history["best_fitness"], label="Najlepsza wartość")
-        plt.title("Najlepszy fitness")
-        plt.xlabel("Epoka")
-        plt.ylabel("Wartość funkcji")
+        plt.plot(history["best_fitness"], label="Best value")
+        plt.title("Best fitness")
+        plt.xlabel("Epoch")
+        plt.ylabel("Value of function")
         plt.legend()
         plt.grid(True)
         plt.tight_layout()
         plt.show()
 
         plt.figure()
-        plt.plot(history["avg_fitness"], label="Średnia")
-        plt.plot(history["std_fitness"], label="Odchylenie standardowe")
-        plt.title("Średnia i odchylenie standardowe funkcji")
-        plt.xlabel("Epoka")
-        plt.ylabel("Wartość funkcji")
+        plt.plot(history["avg_fitness"], label="average")
+        plt.plot(history["std_fitness"], label="standard deviation")
+        plt.title("Average and standard deviation of the function")
+        plt.xlabel("Epoch")
+        plt.ylabel("Value of function")
         plt.legend()
         plt.grid(True)
         plt.tight_layout()
