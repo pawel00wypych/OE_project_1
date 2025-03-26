@@ -14,14 +14,17 @@ from genetic_algorithm.elitism import Elitism
 def save_params_to_file(best_solution, config):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     directory = "params"
-    filename = f"params_{timestamp}.txt"
-    file_path = os.path.join(directory, filename)
 
     if not os.path.exists(directory):
         os.makedirs(directory)
 
+    filename = f"params_{timestamp}.txt"
+    file_path = os.path.join(directory, filename)
+
+
+
     with open(file_path,"w") as file:
-        file.write(f"fitness_function:{config['fitness_function']}\n")
+        file.write(f"fitness_function:{config['fitness_function'].__name__}\n")
         file.write(f"num_of_variables:{config['num_of_variables']}\n")
         file.write(f"mutation_probability:{config['mutation_probability']}\n")
         file.write(f"crossover_probability:{config['crossover_probability']}\n")
@@ -101,7 +104,7 @@ def run_genetic_algorithm(config):
         "two": Mutation.two_point_mutation,
         "edge": Mutation.edge_mutation
     }
-
+    print(f"epochs:{epochs}" )
     for epoch in range(epochs):
         elitism_operator = Elitism(population=population.individuals)
         elitism_operator.choose_the_best_individuals()
@@ -124,6 +127,11 @@ def run_genetic_algorithm(config):
         best_fitness = min(fitness_values)
         avg_fitness = mean(fitness_values)
         std_fitness = stdev(fitness_values) if len(fitness_values) > 1 else 0
+        best_individual = min(population.individuals, key=lambda ind: ind.fitness)
+
+        cursor.execute("INSERT INTO epochs (fitness, variables, expected_result) VALUES (?, ?, ?)",(best_fitness, str(best_individual), str(expected_minimum)))
+
+        print(f"Epoch {epoch} best solution: {best_individual.decoded_variables}, fitness value: {best_fitness}  best expected solution: {expected_minimum}")
 
         history["best_fitness"].append(best_fitness)
         history["avg_fitness"].append(avg_fitness)
@@ -131,8 +139,6 @@ def run_genetic_algorithm(config):
 
     end_time = time.time()
     execution_time = end_time - start_time
-
-    best_individual = min(population.individuals, key=lambda ind: ind.fitness)
 
     result = {
         "best_solution": best_individual.decoded_variables,
@@ -142,11 +148,11 @@ def run_genetic_algorithm(config):
         "history": history
     }
 
-    cursor.execute("INSERT INTO epochs (fitness, variables, expected_result) VALUES (?, ?, ?)",(best_fitness, str(best_individual.decoded_variables), str(expected_minimum)))
     end_time = time.time()
     print(f"Elapsed time: {end_time - start_time:.2f} s")
     print(f"Best solution: {best_individual.decoded_variables}, fitness value: {best_fitness}  best expected solution: {expected_minimum}")
     save_params_to_file(f"Best solution: {best_individual.decoded_variables}, fitness value: {best_fitness}  best expected solution: {expected_minimum}", config)
     conn.commit()
     conn.close()
+
     return result
