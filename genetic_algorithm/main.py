@@ -11,7 +11,52 @@ from genetic_algorithm.mutation import Mutation
 from genetic_algorithm.inversion import Inversion
 from genetic_algorithm.elitism import Elitism
 
+def save_params_to_file(best_solution, config):
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    directory = "params"
+    filename = f"params_{timestamp}.txt"
+    file_path = os.path.join(directory, filename)
+
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    with open(file_path,"w") as file:
+        file.write(f"fitness_function:{config['fitness_function']}\n")
+        file.write(f"num_of_variables:{config['num_of_variables']}\n")
+        file.write(f"mutation_probability:{config['mutation_probability']}\n")
+        file.write(f"crossover_probability:{config['crossover_probability']}\n")
+        file.write(f"inversion_probability:{config['inversion_probability']}\n")
+        file.write(f"variables_ranges_list:{config['variables_ranges_list']}\n")
+        file.write(f"precision:{config['precision']}\n")
+        file.write(f"expected_minimum:{config['expected_minimum']}\n")
+        file.write(f"db_name:{config['fitness_function']}.db\n")
+        file.write(best_solution+"\n")
+
 def run_genetic_algorithm(config):
+
+    directory = "sqlite_folder"
+
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    db_name = f"{config['fitness_function'].__name__}_{timestamp}.db"
+    db_path = os.path.join(directory, db_name)
+    print(f"Database directory: {directory}")
+    print(f"Database path: {db_path}")
+
+
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute('''
+            CREATE TABLE IF NOT EXISTS epochs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                fitness TEXT NOT NULL,
+                variables TEXT NOT NULL,
+                expected_result NOT NULL
+            )
+        ''')
+
     fitness_function = config["fitness_function"]
     num_of_variables = config["num_of_variables"]
     mutation_probability = config["mutation_probability"]
@@ -97,4 +142,11 @@ def run_genetic_algorithm(config):
         "history": history
     }
 
+    cursor.execute("INSERT INTO epochs (fitness, variables, expected_result) VALUES (?, ?, ?)",(best_fitness, str(best_individual.decoded_variables), str(expected_minimum)))
+    end_time = time.time()
+    print(f"Elapsed time: {end_time - start_time:.2f} s")
+    print(f"Best solution: {best_individual.decoded_variables}, fitness value: {best_fitness}  best expected solution: {expected_minimum}")
+    save_params_to_file(f"Best solution: {best_individual.decoded_variables}, fitness value: {best_fitness}  best expected solution: {expected_minimum}", config)
+    conn.commit()
+    conn.close()
     return result

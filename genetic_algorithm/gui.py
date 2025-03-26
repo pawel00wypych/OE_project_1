@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from matplotlib import pyplot as plt
 from genetic_algorithm import evaluation_functions
-from .main import run_genetic_algorithm
+from main import run_genetic_algorithm
 
 
 

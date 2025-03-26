@@ -173,5 +173,5 @@ cython_debug/
 
 .idea/
 *.db
-params/
-sqlite_folder/
+genetic_algorithm/params/
+genetic_algorithm/sqlite_folder/
