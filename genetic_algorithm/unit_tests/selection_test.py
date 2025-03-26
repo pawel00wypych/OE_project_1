@@ -7,12 +7,11 @@ from genetic_algorithm.selection import Selection
 
 class Population:
     def __init__(self, individuals):
-        self.individuals = individuals
+        self.individuals = individuals 
 
 # selection test on defualt population and individuals
 if __name__ == "__main__":
     population_size = 10
-    
     num_variables = 3
     precision = 2
     variables_list = [(0, 5), (-1, 7), (2, 8)]

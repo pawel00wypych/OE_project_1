@@ -81,7 +81,7 @@ class  Crossover:
                 granule_start_point = 0
                 n = 0
                 while bits_left > 0:
-                    granule_size = random.randint(1, chromo1.number_of_bits_chromosome // 10)
+                    granule_size = random.randint(1, max(1,(chromo1.number_of_bits_chromosome // 10)))
                     if (bits_left - granule_size) < 0:
                         granule_size = bits_left
                         bits_left = 0
@@ -89,11 +89,11 @@ class  Crossover:
                         bits_left = bits_left - granule_size
 
                     if n%2 == 0:
-                        new_genes1.extend(chromo2.chromosome[granule_start_point:granule_size])
-                        new_genes2.extend(chromo1.chromosome[granule_start_point:granule_size])
+                        new_genes1.extend(chromo2.chromosome[granule_start_point:granule_start_point+granule_size])
+                        new_genes2.extend(chromo1.chromosome[granule_start_point:granule_start_point+granule_size])
                     else:
-                        new_genes1.extend(chromo1.chromosome[granule_start_point:granule_size])
-                        new_genes2.extend(chromo2.chromosome[granule_start_point:granule_size])
+                        new_genes1.extend(chromo1.chromosome[granule_start_point:granule_start_point+granule_size])
+                        new_genes2.extend(chromo2.chromosome[granule_start_point:granule_start_point+granule_size])
 
                     granule_start_point = granule_start_point + granule_size
                     n += 1
