@@ -27,6 +27,7 @@ class GeneticApp(tk.Tk):
             entry.pack()
             return entry
 
+        self.num_of_executions_var = field("How many algorithm executions:") # How many times does algorithm have to be executed with the same parameters
         self.stop_criteria_var = field("Num of epochs without change to stop:")
         self.variables_entry = field("Number of variables:")
         self.precision_entry = field("Precision (e.g. 6):")
@@ -76,6 +77,7 @@ class GeneticApp(tk.Tk):
             crossover = self.crossover_var.get()
             mutation = self.mutation_var.get()
             stop_criteria = int(self.stop_criteria_var.get())
+            num_of_executions = int(self.num_of_executions_var.get())
 
             # --- Function setup ---
             if fun_name == "Hypersphere":
@@ -118,7 +120,8 @@ class GeneticApp(tk.Tk):
                 "mutation_method": mutation,
                 "epochs": epochs,
                 "population_size": population,
-                "stop_criteria": stop_criteria
+                "stop_criteria": stop_criteria,
+                "num_of_executions": num_of_executions
             }
 
             # --- Run algorithm ---
@@ -127,21 +130,28 @@ class GeneticApp(tk.Tk):
             # --- Show result ---
             text = f"Best solution:\n{result['best_solution']}\n\n"
             text += f"Best fitness: {result['best_fitness']}\n"
-            text += f"Expected minimum: {result['expected_minimum']}\n"
+            text += f"Expected result: {result['expected_minimum']}\n"
             text += f"Execution time: {result['execution_time']:.2f}s\n"
             self.result_text.delete("1.0", tk.END)
             self.result_text.insert(tk.END, text)
 
             # --- Show plots ---
-            self.plot_results(result["history"])
+            self.plot_results(result["history"], result)
 
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
-    def plot_results(self, history):
+    def plot_results(self, history, result):
+        best_exec_indices = [i for i, num in enumerate(history["execution_num"]) if num == result['best_execution_num']]
+
+        # Filter history data for the best execution
+        best_fitness = [history["best_fitness"][i] for i in best_exec_indices]
+        avg_fitness = [history["avg_fitness"][i] for i in best_exec_indices]
+        std_fitness = [history["std_fitness"][i] for i in best_exec_indices]
+
         plt.figure()
-        plt.plot(history["best_fitness"], label="Best value")
-        plt.title("Best fitness")
+        plt.plot(best_fitness, label="Best value")
+        plt.title("Best fitness of all executions")
         plt.xlabel("Epoch")
         plt.ylabel("Value of function")
         plt.legend()
@@ -150,8 +160,8 @@ class GeneticApp(tk.Tk):
         plt.show()
 
         plt.figure()
-        plt.plot(history["avg_fitness"], label="average")
-        plt.plot(history["std_fitness"], label="standard deviation")
+        plt.plot(avg_fitness, label="average")
+        plt.plot(std_fitness, label="standard deviation")
         plt.title("Average and standard deviation of the function")
         plt.xlabel("Epoch")
         plt.ylabel("Value of function")
