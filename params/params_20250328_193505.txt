@@ -1,0 +1,10 @@
+fitness_function:hypersphere_fitness
+num_of_variables:2
+mutation_probability:0.5
+crossover_probability:0.7
+inversion_probability:0.4
+variables_ranges_list:[(-5, 5)]
+precision:8
+expected_minimum:None
+db_name:hypersphere_fitness.db
+Best solution: [-4.998635686932723, 4.997064564374336], fitness value: 49.968764001129074  best expected solution: None

@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from matplotlib import pyplot as plt
 from genetic_algorithm import evaluation_functions
-from main import run_genetic_algorithm
+from .main import run_genetic_algorithm
+import numpy as np
 
 class GeneticApp(tk.Tk):
     def __init__(self):
@@ -122,18 +123,40 @@ class GeneticApp(tk.Tk):
             }
 
             # --- Run algorithm ---
-            result = run_genetic_algorithm(config)
+            results = []
+            execution_times = []
+            best_solution = None
+            best_fitness = float('inf')
+            best_history = None
+
+            for i in range(10):
+                result = run_genetic_algorithm(config)
+                results.append(result['best_fitness'])
+                execution_times.append(result['execution_time'])
+
+                # Keep track of the best solution
+                if result['best_fitness'] < best_fitness:
+                    best_fitness = result['best_fitness']
+                    best_solution = result['best_solution']
+                    best_history = result['history']
+
+            # --- Calculate statistics ---
+            average_result = np.mean(results)
+            average_time = np.mean(execution_times)
+            best_result = np.min(results)
+            worst_result = np.max(results)
 
             # --- Show result ---
-            text = f"Best solution:\n{result['best_solution']}\n\n"
-            text += f"Best fitness: {result['best_fitness']}\n"
-            text += f"Expected minimum: {result['expected_minimum']}\n"
-            text += f"Execution time: {result['execution_time']:.2f}s\n"
+            text = f"Average fitness: {average_result:.6f}\n"
+            text += f"Best fitness: {best_result:.6f}\n"
+            text += f"Worst fitness: {worst_result:.6f}\n"
+            text += f"Average execution time: {average_time:.2f}s\n"
+            text += f"Best solution: {best_solution}\n"
             self.result_text.delete("1.0", tk.END)
             self.result_text.insert(tk.END, text)
 
-            # --- Show plots ---
-            self.plot_results(result["history"])
+            # --- Show plots for best result ---
+            self.plot_results(best_history)
 
         except Exception as e:
             messagebox.showerror("Error", str(e))
